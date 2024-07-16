@@ -2,6 +2,10 @@ let originalData = null; // Variable to store original puzzle data
 let regionColors = {}; // Variable to store colors for regions
 
 document.addEventListener("DOMContentLoaded", function () {
+  let startTime;
+  let solved = false;
+  let timerInterval;
+
   // Function to handle cell clicks
   function toggleCell(event) {
     const cell = event.target;
@@ -47,6 +51,7 @@ document.addEventListener("DOMContentLoaded", function () {
         .then((data) => {
           originalData = data; // Store the original data
           displayPuzzle(data); // Display the puzzle
+          startTimer();
         })
         .catch((error) => console.error("Error fetching puzzle:", error));
     }
@@ -92,13 +97,15 @@ document.addEventListener("DOMContentLoaded", function () {
   function validateSolution() {
     // Perform validation and get cells to highlight
     const { isValid, cellsToHighlight } = validateRules();
-  
+
     // Highlight invalid cells
     highlightCells(cellsToHighlight);
-  
+
     // Update the validation label
     const validationLabel = document.getElementById("validation-label");
     if (isValid) {
+      solved = true;
+      clearInterval(timerInterval);
       validationLabel.textContent = "Success! Your solution is valid.";
       validationLabel.style.color = "green";
     } else {
@@ -112,17 +119,18 @@ document.addEventListener("DOMContentLoaded", function () {
       .getElementById("puzzle-container")
       .getElementsByTagName("table")[0];
     const puzzleRows = puzzleTable.rows;
-  
+
     // Reset all cells to default style
     for (let i = 0; i < puzzleRows.length; i++) {
       for (let j = 0; j < puzzleRows[i].cells.length; j++) {
         puzzleRows[i].cells[j].style.backgroundImage = ""; // Reset background image
       }
     }
-  
+
     // Apply highlights to specified cells with small diagonal lines
     cellsToHighlight.forEach(([i, j]) => {
-      puzzleRows[i].cells[j].style.backgroundImage = "repeating-linear-gradient(45deg, red, red 1px, transparent 1px, transparent 3px)";
+      puzzleRows[i].cells[j].style.backgroundImage =
+        "repeating-linear-gradient(45deg, red, red 1px, transparent 1px, transparent 3px)";
     });
   }
 
@@ -137,14 +145,14 @@ document.addEventListener("DOMContentLoaded", function () {
     const colCounts = new Array(puzzleSize).fill(0);
     const cellsToHighlight = [];
     let allOsPlaced = true;
-  
+
     // Check for each region and count 'O's in rows and columns
     for (let i = 0; i < puzzleSize; i++) {
       for (let j = 0; j < puzzleSize; j++) {
         const cell = puzzleRows[i].cells[j];
         const regionId = originalData.cell_info[`(${i}, ${j})`];
         const cellValue = cell.textContent;
-  
+
         if (cellValue === "O") {
           // Check for region constraints
           if (!regionCounts[regionId]) {
@@ -153,7 +161,7 @@ document.addEventListener("DOMContentLoaded", function () {
           regionCounts[regionId]++;
           rowCounts[i]++;
           colCounts[j]++;
-  
+
           // Check for diagonal constraints
           const diagonals = [
             [i - 1, j - 1],
@@ -178,7 +186,7 @@ document.addEventListener("DOMContentLoaded", function () {
         }
       }
     }
-  
+
     // Check if each region has exactly one 'O'
     for (const regionId in regionCounts) {
       if (regionCounts[regionId] !== 1) {
@@ -186,7 +194,10 @@ document.addEventListener("DOMContentLoaded", function () {
         for (let i = 0; i < puzzleSize; i++) {
           for (let j = 0; j < puzzleSize; j++) {
             const regionCheckId = originalData.cell_info[`(${i}, ${j})`];
-            if (regionCheckId === regionId && puzzleRows[i].cells[j].textContent === "O") {
+            if (
+              regionCheckId === regionId &&
+              puzzleRows[i].cells[j].textContent === "O"
+            ) {
               cellsToHighlight.push([i, j]);
             }
           }
@@ -194,7 +205,7 @@ document.addEventListener("DOMContentLoaded", function () {
         allOsPlaced = false;
       }
     }
-  
+
     // Check if each row and column has exactly one 'O'
     for (let i = 0; i < puzzleSize; i++) {
       if (rowCounts[i] !== 1) {
@@ -216,15 +227,32 @@ document.addEventListener("DOMContentLoaded", function () {
         allOsPlaced = false;
       }
     }
-  
+
     // If all 'O's are not placed, the solution is invalid
     if (!allOsPlaced) {
       return { isValid: false, cellsToHighlight };
     }
-  
+
     // Check if there are any cells to highlight
     const isValid = cellsToHighlight.length === 0;
     return { isValid, cellsToHighlight };
+  }
+
+  function startTimer() {
+    startTime = new Date().getTime();
+    timerInterval = setInterval(updateTimer, 1000);
+  }
+
+  function updateTimer() {
+    if (solved) {
+      clearInterval(timerInterval);
+      return;
+    }
+    const currentTime = new Date().getTime();
+    const elapsedTime = Math.floor((currentTime - startTime) / 1000);
+    document.getElementById(
+      "timer-label"
+    ).textContent = `Time: ${elapsedTime} seconds`;
   }
 
   function showSolution() {
