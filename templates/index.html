@@ -36,9 +36,11 @@
 
 <h1>Puzzle Display</h1>
 <button onclick="fetchPuzzle()">Generate Puzzle</button>
-<button onclick="showSolution()">Show Original Matrix</button>
+<!-- <button onclick="showSolution()">Show Original Matrix</button> -->
 <div id="puzzle-container"></div>
-<div id="solution-container"></div> <!-- Changed ID to match JavaScript -->
+
+<label id="validation-label"></label>
+<!-- <div id="solution-container"></div> -->
 
 <!-- Link to the external JavaScript file -->
 <script src="{{ url_for('static', filename='script.js') }}"></script>
