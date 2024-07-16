@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Puzzle Display</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 20px;
+        }
+        table {
+            border-collapse: collapse;
+        }
+        td {
+            width: 40px;
+            height: 40px;
+            text-align: center;
+            border: 1px solid #ccc;
+            font-size: 24px;
+            cursor: pointer; /* Change cursor to pointer for clickable cells */
+        }
+        #original-matrix {
+            margin-top: 20px;
+        }
+        #solution-container {
+            margin-top: 20px;
+            display: none; /* Initially hide the solution container */
+        }
+    </style>
+</head>
+<body>
+
+<h1>Puzzle Display</h1>
+<button onclick="fetchPuzzle()">Generate Puzzle</button>
+<button onclick="showSolution()">Show Original Matrix</button>
+<div id="puzzle-container"></div>
+<div id="solution-container"></div> <!-- Changed ID to match JavaScript -->
+
+<!-- Link to the external JavaScript file -->
+<script src="{{ url_for('static', filename='script.js') }}"></script>
+
+</body>
+</html>
