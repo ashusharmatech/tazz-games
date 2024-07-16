@@ -79,7 +79,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const size = 8; // Change this as needed
     if (!originalData) {
       // Only fetch if not already fetched
-      fetch(`http://127.0.0.1:5000/generate_puzzle?size=${size}`)
+      fetch(`/generate_puzzle?size=${size}`)
         .then((response) => response.json())
         .then((data) => {
           originalData = data; // Store the original data
