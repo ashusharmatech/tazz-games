@@ -74,7 +74,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Assign colors to regions
     uniqueRegions.forEach((region, index) => {
-      regionColors[region] = colors[index];
+      console.log(region + "  " + colors[index - 1]);
+      regionColors[region] = colors[index - 1];
     });
 
     // Create table rows and cells
@@ -135,7 +136,9 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   function validateRules() {
-    const puzzleTable = document.getElementById("puzzle-container").getElementsByTagName("table")[0];
+    const puzzleTable = document
+      .getElementById("puzzle-container")
+      .getElementsByTagName("table")[0];
     const puzzleRows = puzzleTable.rows;
     const puzzleSize = puzzleRows.length;
     const regionCounts = {};
@@ -143,14 +146,14 @@ document.addEventListener("DOMContentLoaded", function () {
     const colCounts = new Array(puzzleSize).fill(0);
     const cellsToHighlight = [];
     let allOsPlaced = true;
-  
+
     // Check for each region and count 'O's in rows and columns
     for (let i = 0; i < puzzleSize; i++) {
       for (let j = 0; j < puzzleSize; j++) {
         const cell = puzzleRows[i].cells[j];
         const regionId = originalData.cell_info[`(${i}, ${j})`];
         const cellValue = cell.textContent;
-  
+
         if (cellValue === "O") {
           // Check for region constraints
           if (!regionCounts[regionId]) {
@@ -159,7 +162,7 @@ document.addEventListener("DOMContentLoaded", function () {
           regionCounts[regionId]++;
           rowCounts[i]++;
           colCounts[j]++;
-  
+
           // Check for diagonal constraints
           const diagonals = [
             [i - 1, j - 1],
@@ -182,7 +185,7 @@ document.addEventListener("DOMContentLoaded", function () {
         }
       }
     }
-  
+
     // Check if each region has exactly one 'O'
     for (const regionId in regionCounts) {
       if (regionCounts[regionId] !== 1) {
@@ -190,7 +193,10 @@ document.addEventListener("DOMContentLoaded", function () {
         for (let i = 0; i < puzzleSize; i++) {
           for (let j = 0; j < puzzleSize; j++) {
             const regionCheckId = originalData.cell_info[`(${i}, ${j})`];
-            if (regionCheckId === regionId && puzzleRows[i].cells[j].textContent === "O") {
+            if (
+              regionCheckId === regionId &&
+              puzzleRows[i].cells[j].textContent === "O"
+            ) {
               cellsToHighlight.push([i, j]);
             }
           }
@@ -198,7 +204,7 @@ document.addEventListener("DOMContentLoaded", function () {
         allOsPlaced = false;
       }
     }
-  
+
     // Check if each row and column has exactly one 'O'
     for (let i = 0; i < puzzleSize; i++) {
       if (rowCounts[i] !== 1) {
@@ -220,7 +226,7 @@ document.addEventListener("DOMContentLoaded", function () {
         allOsPlaced = false;
       }
     }
-  
+
     // If any 'O's are misplaced, the solution is invalid
     const isValid = allOsPlaced && cellsToHighlight.length === 0;
     return { isValid, cellsToHighlight };
