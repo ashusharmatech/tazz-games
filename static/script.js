@@ -90,7 +90,13 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   function validateSolution() {
-    let isValid = validateRules();
+    // Perform validation and get cells to highlight
+    const { isValid, cellsToHighlight } = validateRules();
+  
+    // Highlight invalid cells
+    highlightCells(cellsToHighlight);
+  
+    // Update the validation label
     const validationLabel = document.getElementById("validation-label");
     if (isValid) {
       validationLabel.textContent = "Success! Your solution is valid.";
@@ -99,6 +105,25 @@ document.addEventListener("DOMContentLoaded", function () {
       validationLabel.textContent = "Error: Your solution is invalid.";
       validationLabel.style.color = "red";
     }
+  }
+
+  function highlightCells(cellsToHighlight) {
+    const puzzleTable = document
+      .getElementById("puzzle-container")
+      .getElementsByTagName("table")[0];
+    const puzzleRows = puzzleTable.rows;
+  
+    // Reset all cells to default style
+    for (let i = 0; i < puzzleRows.length; i++) {
+      for (let j = 0; j < puzzleRows[i].cells.length; j++) {
+        puzzleRows[i].cells[j].style.backgroundImage = ""; // Reset background image
+      }
+    }
+  
+    // Apply highlights to specified cells with small diagonal lines
+    cellsToHighlight.forEach(([i, j]) => {
+      puzzleRows[i].cells[j].style.backgroundImage = "repeating-linear-gradient(45deg, red, red 1px, transparent 1px, transparent 3px)";
+    });
   }
 
   function validateRules() {
@@ -110,6 +135,8 @@ document.addEventListener("DOMContentLoaded", function () {
     const regionCounts = {};
     const rowCounts = new Array(puzzleSize).fill(0);
     const colCounts = new Array(puzzleSize).fill(0);
+    const cellsToHighlight = [];
+    let allOsPlaced = true;
   
     // Check for each region and count 'O's in rows and columns
     for (let i = 0; i < puzzleSize; i++) {
@@ -142,9 +169,12 @@ document.addEventListener("DOMContentLoaded", function () {
               dj < puzzleSize &&
               puzzleRows[di].cells[dj].textContent === "O"
             ) {
-              return false; // Invalid solution
+              cellsToHighlight.push([i, j]); // Add current cell to highlight list
+              cellsToHighlight.push([di, dj]); // Add diagonal cell to highlight list
             }
           }
+        } else if (cellValue !== "O" && cellValue !== "") {
+          allOsPlaced = false;
         }
       }
     }
@@ -152,18 +182,49 @@ document.addEventListener("DOMContentLoaded", function () {
     // Check if each region has exactly one 'O'
     for (const regionId in regionCounts) {
       if (regionCounts[regionId] !== 1) {
-        return false; // Invalid solution
+        // Find cells in the region and highlight them
+        for (let i = 0; i < puzzleSize; i++) {
+          for (let j = 0; j < puzzleSize; j++) {
+            const regionCheckId = originalData.cell_info[`(${i}, ${j})`];
+            if (regionCheckId === regionId && puzzleRows[i].cells[j].textContent === "O") {
+              cellsToHighlight.push([i, j]);
+            }
+          }
+        }
+        allOsPlaced = false;
       }
     }
   
     // Check if each row and column has exactly one 'O'
     for (let i = 0; i < puzzleSize; i++) {
-      if (rowCounts[i] !== 1 || colCounts[i] !== 1) {
-        return false; // Invalid solution
+      if (rowCounts[i] !== 1) {
+        // Highlight cells in the row
+        for (let j = 0; j < puzzleSize; j++) {
+          if (puzzleRows[i].cells[j].textContent === "O") {
+            cellsToHighlight.push([i, j]);
+          }
+        }
+        allOsPlaced = false;
+      }
+      if (colCounts[i] !== 1) {
+        // Highlight cells in the column
+        for (let j = 0; j < puzzleSize; j++) {
+          if (puzzleRows[j].cells[i].textContent === "O") {
+            cellsToHighlight.push([j, i]);
+          }
+        }
+        allOsPlaced = false;
       }
     }
   
-    return true; // Valid solution
+    // If all 'O's are not placed, the solution is invalid
+    if (!allOsPlaced) {
+      return { isValid: false, cellsToHighlight };
+    }
+  
+    // Check if there are any cells to highlight
+    const isValid = cellsToHighlight.length === 0;
+    return { isValid, cellsToHighlight };
   }
 
   function showSolution() {
