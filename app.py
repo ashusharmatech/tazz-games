@@ -84,6 +84,17 @@ def create_regions_around_os(matrix, N):
 
                 if nearest_region is not None:
                     matrix[x][y] = nearest_region
+                else:
+                    # If no adjacent region found, find the nearest region
+                    min_distance = float('inf')
+                    for nx in range(N):
+                        for ny in range(N):
+                            if matrix[nx][ny] != 'X':
+                                distance = abs(nx - x) + abs(ny - y)
+                                if distance < min_distance:
+                                    min_distance = distance
+                                    nearest_region = matrix[nx][ny]
+                    matrix[x][y] = nearest_region
                     # Optionally log the filling action
                     # print(f"Filled empty cell ({x}, {y}) with region ID {nearest_region}")
 
