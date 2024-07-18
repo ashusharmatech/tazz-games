@@ -11,9 +11,11 @@
             flex-direction: column;
             align-items: center;
             margin-top: 20px;
+            background-color: #f0f0f0; /* Add a light gray background */
         }
         table {
             border-collapse: collapse;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Add a subtle shadow to the table */
         }
         td {
             width: 40px;
@@ -22,6 +24,10 @@
             border: 1px solid #ccc;
             font-size: 24px;
             cursor: pointer; /* Change cursor to pointer for clickable cells */
+            transition: background-color 0.2s; /* Add a transition effect for hover */
+        }
+        td:hover {
+            background-color: #eee; /* Change background color on hover */
         }
         #original-matrix {
             margin-top: 20px;
@@ -29,6 +35,31 @@
         #solution-container {
             margin-top: 20px;
             display: none; /* Initially hide the solution container */
+        }
+        h1 {
+            color: #333; /* Darken the title color */
+            font-weight: bold;
+            margin-bottom: 10px; /* Add some space between title and button */
+        }
+        button {
+            background-color: #4CAF50; /* Green button color */
+            color: #fff; /* White text color */
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer; /* Change cursor to pointer for clickable button */
+        }
+        button:hover {
+            background-color: #3e8e41; /* Darken the button color on hover */
+        }
+        #validation-label {
+            color: #ff0000; /* Red color for error messages */
+            font-size: 18px;
+            margin-top: 10px; /* Add some space between button and label */
+        }
+        #timer-label {
+            font-size: 18px;
+            margin-top: 10px; /* Add some space between solution container and timer label */
         }
     </style>
 </head>
@@ -41,9 +72,9 @@
 
 <label id="validation-label"></label>
 <!-- <div id="solution-container"></div> -->
-
 <p id="timer-label">Time: 0 seconds</p>
 
+<audio id="tick-sound" src="{{ url_for('static', filename='tap.wav') }}" preload="auto"></audio>
 
 <!-- Link to the external JavaScript file -->
 <script src="{{ url_for('static', filename='script.js') }}"></script>

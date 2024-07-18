@@ -10,15 +10,29 @@ document.addEventListener("DOMContentLoaded", function () {
   function toggleCell(event) {
     const cell = event.target;
 
-    // Toggle between '', 'X', and 'O'
+    // Toggle between '', 'X', and '♕'
     if (cell.textContent === "") {
       cell.textContent = "X";
     } else if (cell.textContent === "X") {
-      cell.textContent = "O";
+      cell.textContent = "♕";
     } else {
       cell.textContent = "";
     }
     validateSolution();
+    playTickSound(); 
+    if ("vibrate" in navigator) {
+      navigator.vibrate(50); // Vibrate for 50 milliseconds
+    }
+  }
+
+  function playTickSound() {
+    const tickSound = document.getElementById("tick-sound");
+  
+    if (tickSound) {
+      tickSound.pause();      // Pause the sound
+      tickSound.currentTime = 0; // Reset the sound to the start
+      tickSound.play();       // Play the sound again
+    }
   }
 
   // Add click event listeners to all cells
@@ -147,14 +161,14 @@ document.addEventListener("DOMContentLoaded", function () {
     const cellsToHighlight = [];
     let allOsPlaced = true;
 
-    // Check for each region and count 'O's in rows and columns
+    // Check for each region and count '♕'s in rows and columns
     for (let i = 0; i < puzzleSize; i++) {
       for (let j = 0; j < puzzleSize; j++) {
         const cell = puzzleRows[i].cells[j];
         const regionId = originalData.cell_info[`(${i}, ${j})`];
         const cellValue = cell.textContent;
 
-        if (cellValue === "O") {
+        if (cellValue === "♕") {
           // Check for region constraints
           if (!regionCounts[regionId]) {
             regionCounts[regionId] = 0;
@@ -176,7 +190,7 @@ document.addEventListener("DOMContentLoaded", function () {
               di < puzzleSize &&
               dj >= 0 &&
               dj < puzzleSize &&
-              puzzleRows[di].cells[dj].textContent === "O"
+              puzzleRows[di].cells[dj].textContent === "♕"
             ) {
               cellsToHighlight.push([i, j]); // Add current cell to highlight list
               cellsToHighlight.push([di, dj]); // Add diagonal cell to highlight list
@@ -186,7 +200,7 @@ document.addEventListener("DOMContentLoaded", function () {
       }
     }
 
-    // Check if each region has exactly one 'O'
+    // Check if each region has exactly one '♕'
     for (const regionId in regionCounts) {
       if (regionCounts[regionId] !== 1) {
         // Highlight cells in the region
@@ -195,7 +209,7 @@ document.addEventListener("DOMContentLoaded", function () {
             const regionCheckId = originalData.cell_info[`(${i}, ${j})`];
             if (
               regionCheckId === regionId &&
-              puzzleRows[i].cells[j].textContent === "O"
+              puzzleRows[i].cells[j].textContent === "♕"
             ) {
               cellsToHighlight.push([i, j]);
             }
@@ -205,12 +219,12 @@ document.addEventListener("DOMContentLoaded", function () {
       }
     }
 
-    // Check if each row and column has exactly one 'O'
+    // Check if each row and column has exactly one '♕'
     for (let i = 0; i < puzzleSize; i++) {
       if (rowCounts[i] !== 1) {
         // Highlight cells in the row
         for (let j = 0; j < puzzleSize; j++) {
-          if (puzzleRows[i].cells[j].textContent === "O") {
+          if (puzzleRows[i].cells[j].textContent === "♕") {
             cellsToHighlight.push([i, j]);
           }
         }
@@ -219,7 +233,7 @@ document.addEventListener("DOMContentLoaded", function () {
       if (colCounts[i] !== 1) {
         // Highlight cells in the column
         for (let j = 0; j < puzzleSize; j++) {
-          if (puzzleRows[j].cells[i].textContent === "O") {
+          if (puzzleRows[j].cells[i].textContent === "♕") {
             cellsToHighlight.push([j, i]);
           }
         }
@@ -227,7 +241,7 @@ document.addEventListener("DOMContentLoaded", function () {
       }
     }
 
-    // If any 'O's are misplaced, the solution is invalid
+    // If any '♕'s are misplaced, the solution is invalid
     const isValid = allOsPlaced && cellsToHighlight.length === 0;
     return { isValid, cellsToHighlight };
   }
