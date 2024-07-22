@@ -6,6 +6,24 @@ document.addEventListener("DOMContentLoaded", function () {
   let solved = false;
   let timerInterval;
 
+  let isAudioOn = true;
+  let isVibrationOn = true;
+
+  document
+    .getElementById("audio-toggle")
+    .addEventListener("click", function () {
+      isAudioOn = !isAudioOn;
+      this.classList.toggle("on", isAudioOn);
+    });
+
+  document
+    .getElementById("vibration-toggle")
+    .addEventListener("click", function () {
+      isVibrationOn = !isVibrationOn;
+      this.classList.toggle("on", isVibrationOn);
+    });
+    
+
   // Function to handle cell clicks
   function toggleCell(event) {
     const cell = event.target;
@@ -19,19 +37,21 @@ document.addEventListener("DOMContentLoaded", function () {
       cell.textContent = "";
     }
     validateSolution();
-    playTickSound(); 
-    if ("vibrate" in navigator) {
+    if (isAudioOn) {
+      playTickSound();
+    }
+    if (isVibrationOn && "vibrate" in navigator) {
       navigator.vibrate(50); // Vibrate for 50 milliseconds
     }
   }
 
   function playTickSound() {
     const tickSound = document.getElementById("tick-sound");
-  
+
     if (tickSound) {
-      tickSound.pause();      // Pause the sound
+      tickSound.pause(); // Pause the sound
       tickSound.currentTime = 0; // Reset the sound to the start
-      tickSound.play();       // Play the sound again
+      tickSound.play(); // Play the sound again
     }
   }
 

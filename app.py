@@ -1,6 +1,7 @@
 import random
 from collections import deque
 from flask import Flask, jsonify, request, render_template
+from flask_cors import cross_origin
 
 app = Flask(__name__)
 
@@ -101,6 +102,7 @@ def create_regions_around_os(matrix, N):
     return matrix
 
 @app.route('/generate_puzzle', methods=['GET'])
+@cross_origin()
 def generate_puzzle():
     N = request.args.get('size', default=9, type=int)
     random_puzzle = get_random_puzzle(N)
@@ -131,6 +133,7 @@ def generate_puzzle():
 
 
 @app.route('/')
+@cross_origin()
 def index():
     return render_template('index.html')
 

@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -11,73 +12,150 @@
             flex-direction: column;
             align-items: center;
             margin-top: 20px;
-            background-color: #f0f0f0; /* Add a light gray background */
+            background-color: #f0f0f0;
+            /* Add a light gray background */
         }
+
         table {
             border-collapse: collapse;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Add a subtle shadow to the table */
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            /* Add a subtle shadow to the table */
         }
+
         td {
             width: 40px;
             height: 40px;
             text-align: center;
             border: 1px solid #ccc;
             font-size: 24px;
-            cursor: pointer; /* Change cursor to pointer for clickable cells */
-            transition: background-color 0.2s; /* Add a transition effect for hover */
+            cursor: pointer;
+            /* Change cursor to pointer for clickable cells */
+            transition: background-color 0.2s;
+            /* Add a transition effect for hover */
         }
+
         td:hover {
-            background-color: #eee; /* Change background color on hover */
+            background-color: #eee;
+            /* Change background color on hover */
         }
+
         #original-matrix {
             margin-top: 20px;
         }
+
         #solution-container {
             margin-top: 20px;
-            display: none; /* Initially hide the solution container */
+            display: none;
+            /* Initially hide the solution container */
         }
+
         h1 {
-            color: #333; /* Darken the title color */
+            color: #333;
+            /* Darken the title color */
             font-weight: bold;
-            margin-bottom: 10px; /* Add some space between title and button */
+            margin-bottom: 10px;
+            /* Add some space between title and button */
         }
+
         button {
-            background-color: #4CAF50; /* Green button color */
-            color: #fff; /* White text color */
+            background-color: #4CAF50;
+            /* Green button color */
+            color: #fff;
+            /* White text color */
             padding: 10px 20px;
             border: none;
             border-radius: 5px;
-            cursor: pointer; /* Change cursor to pointer for clickable button */
+            cursor: pointer;
+            /* Change cursor to pointer for clickable button */
         }
+
         button:hover {
-            background-color: #3e8e41; /* Darken the button color on hover */
+            background-color: #3e8e41;
+            /* Darken the button color on hover */
         }
+
         #validation-label {
-            color: #ff0000; /* Red color for error messages */
+            color: #ff0000;
+            /* Red color for error messages */
             font-size: 18px;
-            margin-top: 10px; /* Add some space between button and label */
+            margin-top: 10px;
+            /* Add some space between button and label */
         }
+
         #timer-label {
             font-size: 18px;
-            margin-top: 10px; /* Add some space between solution container and timer label */
+            margin-top: 10px;
+            /* Add some space between solution container and timer label */
+        }
+
+        .toggle-button {
+            display: inline-block;
+            width: 50px;
+            height: 25px;
+            background: #ddd;
+            border-radius: 25px;
+            position: relative;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .toggle-button::after {
+            content: '';
+            position: absolute;
+            width: 23px;
+            height: 23px;
+            background: white;
+            border-radius: 50%;
+            top: 1px;
+            left: 1px;
+            transition: left 0.3s;
+        }
+
+        .toggle-button.on {
+            background: #4caf50;
+        }
+
+        .toggle-button.on::after {
+            left: 26px;
+        }
+
+        .toggle-button-label {
+            font-family: Arial, sans-serif;
+            margin-right: 10px;
+            font-size: 16px;
+            vertical-align: middle;
         }
     </style>
 </head>
+
 <body>
 
-<h1>Puzzle Display</h1>
-<button onclick="fetchPuzzle()">Generate Puzzle</button>
-<!-- <button onclick="showSolution()">Show Original Matrix</button> -->
-<div id="puzzle-container"></div>
+    <h1>Puzzle Display</h1>
+    <button onclick="fetchPuzzle()">Generate Puzzle</button>
+    <!-- <button onclick="showSolution()">Show Original Matrix</button> -->
 
-<label id="validation-label"></label>
-<!-- <div id="solution-container"></div> -->
-<p id="timer-label">Time: 0 seconds</p>
+    <div>
+        <a href="#" class="speaker">
+            <span></span>
+        </a>
+    </div>
+    <div>
+        <span class="toggle-button-label">Vibration</span>
+        <div id="vibration-toggle" class="toggle-button"></div>
+    </div>
 
-<audio id="tick-sound" src="{{ url_for('static', filename='tap.wav') }}" preload="auto"></audio>
 
-<!-- Link to the external JavaScript file -->
-<script src="{{ url_for('static', filename='script.js') }}"></script>
+    <div id="puzzle-container"></div>
+
+    <label id="validation-label"></label>
+    <!-- <div id="solution-container"></div> -->
+    <p id="timer-label">Time: 0 seconds</p>
+
+    <audio id="tick-sound" src="{{ url_for('static', filename='tap.wav') }}" preload="auto"></audio>
+
+    <!-- Link to the external JavaScript file -->
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
 
 </body>
+
 </html>
